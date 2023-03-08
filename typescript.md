@@ -10,4 +10,4 @@ const hello = (name: string) => {
 // output: Hello World
 ```
 
-[back to main](index.md)
+[back to main](README.md)
