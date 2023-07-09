@@ -7,6 +7,21 @@ tags:
   - C
 ---
 
+## WTF is this??
+
+Soooo... Here is the deal! I am an experienced programmer, but, as of July 2023, I very new to C. Hence the reason for me writing this note.
+This right here is a vague summary based on the article _[The C Beginner's Handbook: Learn C Programming Language basics in just a few hours](https://www.freecodecamp.org/news/the-c-beginners-handbook)_ by [Flavio Copes](https://flaviocopes.com/) as well as the auto suggestion from github copilot. lol!
+So if you want the real deal article with the actual knowledge, go read the article, but if you want some dirty cliff notes, you're welcome to chill here for a bit.
+I hope this help you as much as it is helping me.
+
+## Why C?
+
+I've been wanting to learn a low level language for years now but I just haven't had the time (I've been doing too much [React](https://react.dev) recently)! At first, I thought about learing _c++_ and since I didn't really know what tf I was doing, I figured tackling some [leetcode](https://leetcode.com) challenges would at least scratch that itch a little.
+
+This plan was going great until I ran across a video on youtube by [_Eskil Steenberg_](https://www.youtube.com/@eskilsteenberg) called [How I program C](https://www.youtube.com/watch?v=443UNeGrFoM) and the way he talked about _c_ very much resonated with me and with my belief about programming. So I became inspired to first learn _c_, and then go back and tackle _c++_, that or _rust_.
+
+**With that out of the way, here we go!**
+
 ## Basic hello world
 
 A basic c program looks like this:
@@ -25,6 +40,17 @@ Every c program has a main function which is `int main(void)`.
 The `main()` function is the entry point for a C program.
 Sometimes a c program `return 0` at the end but it is not necessary.
 Every line of code in c ends with a semicolon `;`.
+
+## Compiling
+
+To compile a c program you need to have a c compiler installed on your computer.
+You can use `gcc` to compile a c program.
+
+```bash
+gcc hello.c -o hello
+```
+
+Instructions of how to download and install `gcc` can be found [here](https://gcc.gnu.org/install/index.html).
 
 ## Variables and Types
 
@@ -518,24 +544,25 @@ struct Person
 {
   char *name;
   int age;
-} ron, people[10]; // ron is a struct Person, people is an array of struct Person
+} john, people[10], jim = {"Jim", 30}; // john is a struct Person, people is an array of struct Person and jim is a struct Person with the name Jim and age 30
 
 int main(void)
 {
-  ron.name = "Ron";
-  ron.age = 20;
+  john.name = "John";
+  john.age = 20;
 
-  printf("name: %s\n", ron.name); // Ron
-  printf("age: %d\n", ron.age); // 20
+  printf("name: %s\n", john.name); // John
+  printf("age: %d\n", john.age); // 20
 
   people[0].name = "John";
   people[0].age = 20;
   people[1].name = "Jane";
   people[1].age = 30;
-
 }
 
 ```
+
+Structures are passed by copy
 
 ## Typedef Structures
 
@@ -548,11 +575,11 @@ typedef struct
 {
   char *name;
   int age;
-} Person;
+} PERSON;
 
 int main(void)
 {
-  Person person = {"John", 20};
+  PERSON person = {"John", 20};
 
   printf("name: %s\n", person.name); // John
   printf("age: %d\n", person.age); // 20
@@ -570,12 +597,12 @@ typedef struct
 {
   char *name;
   int age;
-} Person;
+} PERSON; // PERSON is a type
 
 int main(void)
 {
-  Person person = {"John", 20};
-  Person *p = &person;
+  PERSON person = {"John", 20};
+  PERSON *p = &person;
 
   printf("name: %s\n", p->name); // John
   printf("age: %d\n", p->age); // 20
@@ -611,4 +638,197 @@ int main(void)
   printf("f: %f\n", number.f); // 10.500000
 }
 
+```
+
+The difference between a union and a structure is that a union can only hold one value at a time.
+
+## Bit Fields
+
+Bit fields are used to store multiple values in a single byte.
+
+```c
+#include <stdio.h>
+
+struct Date
+{
+  unsigned int day : 5; // 1 - 31
+  unsigned int month : 4; // 1 - 12
+  unsigned int year; // 1900 - 2020
+};
+
+int main(void)
+{
+  struct Date today = {26, 4, 2020};
+
+  printf("size of today: %lu\n", sizeof(today)); // 4
+  printf("day: %d\n", today.day); // 26
+  printf("month: %d\n", today.month); // 4
+  printf("year: %d\n", today.year); // 2020
+}
+
+```
+
+## Command line parameters
+
+Sometimes you want to pass parameters to your program when you run it.
+In this case instead of using `int main(void)` you can use `int main(int argc, char *argv[])`.
+
+- `argc` is the number of arguments passed to the program
+- `argv` is an array of strings containing the arguments passed to the program
+
+```c
+#include <stdio.h>
+
+// ./hello hello world
+int main(int argc, char *argv[]) {
+  printf("argc: %d\n", argc); // 3
+  for (int i = 0; i < argc; i++) {
+    printf("%s\n", argv[i]);
+  }
+}
+```
+
+`./hello hello world` is an example of a command line argument.
+
+Another example is `gcc -o hello hello.c` where `-o` is an argument to the `gcc` program.
+
+## Header files
+
+Header files are used to share declarations between multiple files.
+Header files have the `.h` extension.
+They can help to make your code more modular by separating the interface from the implementation.
+
+```c
+// hello.h
+void hello(void);
+```
+
+```c
+// hello.c
+#include <stdio.h>
+#include "hello.h"
+
+void hello(void) {
+  printf("Hello, World!\n");
+}
+```
+
+```c
+// main.c
+#include "hello.h"
+
+int main(void) {
+  hello();
+}
+```
+
+When you compile your program you need to pass all the source files to the compiler.
+
+```bash
+gcc -o main main.c hello.c
+```
+
+## Preprocessor
+
+The preprocessor is a program that runs before the compiler.
+There are a few directives that the preprocessor uses to modify the source code before the compiler runs.
+
+- `#include` - includes a header file
+- `#define` - defines a macro
+- `#undef` - undefines a macro
+- `#ifdef` - checks if a macro is defined
+- `#ifndef` - checks if a macro is not defined
+- `#if` - checks if a condition is true
+- `#else` - alternative for `#if`
+- `#elif` - alternative for `#if`
+- `#endif` - ends a conditional block
+- `#error` - prints an error message
+- `#pragma` - implementation defined directive
+  and more...
+
+```c
+#include <stdio.h>
+#define PI 3.14
+
+int main(void)
+{
+  printf("PI: %f\n", PI); // 3.140000
+}
+
+```
+
+The preprocessor replaces all occurrences of `PI` with `3.14`.
+
+In the case below, the preprocessor will replace `DEBUG` with `0` and the compiler will see this code.
+
+```c
+#include <stdio.h>
+
+const int DEBUG = 0;
+
+int main(void) {
+#if DEBUG == 0
+  printf("I am NOT debugging\n");
+#else
+  printf("I am debugging\n");
+#endif
+}
+```
+
+## Macros and Symbolic Constants
+
+Symbolic constants are used to define constants.
+Macros are used to define constants and functions, which means they can take arguments.
+They are defined using the `#define` directive.
+
+```c
+
+#include <stdio.h>
+#define PI 3.14
+#define AREA(r) (PI * r * r)
+
+int main(void)
+{
+  printf("PI: %f\n", PI); // 3.140000
+  printf("AREA: %f\n", AREA(2)); // 12.560000
+}
+
+```
+
+## If defined
+
+The `#if defined` directive checks if a macro is defined.
+
+```c
+
+#include <stdio.h>
+#define VALUE 1
+
+int main(void) {
+#ifdef VALUE
+  printf("Value is defined\n");
+#else
+  printf("Value is not defined\n");
+#endif
+}
+```
+
+## Predefined symbolic constants
+
+The C language defines a few predefined symbolic constants.
+
+- `__DATE__` - the current date as a string literal in the format "Mmm dd yyyy"
+- `__TIME__` - the current time as a string literal in the format "hh:mm:ss"
+- `__FILE__` - the current filename as a string literal
+- `__LINE__` - the current line number as a decimal constant
+
+```c
+#include <stdio.h>
+
+int main(void) {
+  printf("Date: %s\n", __DATE__);
+  printf("Time: %s\n", __TIME__);
+  printf("File: %s\n", __FILE__);
+  printf("Line: %d\n", __LINE__);
+}
 ```
